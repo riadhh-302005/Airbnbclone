@@ -17,6 +17,8 @@ import {
   ConciergeBell,
 } from 'lucide-react';
 
+import { useRouter, usePathname } from 'next/navigation';
+
 interface NavbarProps {
   onOpenSearch?: () => void;
   activeNavTab?: string;
@@ -28,8 +30,19 @@ export const Navbar: React.FC<NavbarProps> = ({
   activeNavTab = 'Homes',
   onSelectNavTab,
 }) => {
+  const router = useRouter();
+  const pathname = usePathname();
   const { user, activeRole, switchRole } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleTabClick = (tabLabel: string) => {
+    if (onSelectNavTab) {
+      onSelectNavTab(tabLabel);
+    }
+    if (pathname !== '/') {
+      router.push('/');
+    }
+  };
 
   const NAV_TABS = [
     { label: 'All', icon: Globe2 },
@@ -65,7 +78,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               return (
                 <button
                   key={tab.label}
-                  onClick={() => onSelectNavTab && onSelectNavTab(tab.label)}
+                  onClick={() => handleTabClick(tab.label)}
                   className={`flex items-center gap-2 pb-1 text-sm font-semibold transition border-b-2 ${
                     isSelected
                       ? 'text-neutral-900 border-neutral-900 font-bold'
